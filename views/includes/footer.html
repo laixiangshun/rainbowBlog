@@ -1,0 +1,59 @@
+
+<footer>
+    <div>
+        <!--<hr>-->
+        <div>
+            <p>© Copyright rainbow博客</p>
+            <!--<p>2017 京ICP备12034000号-2 京公网安备11010802011553号</p>-->
+            <p><a href="https://github.com/laixiangshun">gitHub地址</a></p>
+            <p>个人微信：739156890</p>
+        </div>
+    </div>
+</footer>
+</div>
+
+<!--<script type="text/javascript">-->
+    <!--$(window).scroll(function () {-->
+        <!--if ($("nav").offsetTop > 200){-->
+            <!--$("nav").addClass("nav-background");-->
+        <!--}-->
+        <!--else{-->
+            <!--$("nav").removeClass("nav-background");-->
+        <!--}-->
+    <!--});-->
+<!--</script>-->
+<script type="text/javascript">
+    $(window).on('load',function(){
+        var footerHeight=0;
+        var footerTop=0;
+        positionFooter();
+        function positionFooter(){
+            footerHeight=$('footer').height();
+            footerTop=($(window).scrollTop()+$(window).height()-footerHeight)+'px';
+            var top=$(document.body).height()+$('nav').height();
+            if(($(document.body).height()+footerHeight)<$(window).height()){
+                $('footer').css({position: 'absolute'}).stop().css({top: footerTop});
+            }
+            else{
+                $('footer').css({position: 'absolute'}).css({top: top});
+            }
+        }
+        $(window).scroll(positionFooter).resize(positionFooter);
+    });
+    //修改头像
+    var pic;
+    function onloadImg(files){
+        if(files.length){
+            var file=files[0];
+            var reader=new FileReader();
+            reader.onload=function(e){
+                pic= e.target.result;
+                console.log(pic);
+                $('#myicon').attr('src',pic);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+</body>
+</html>

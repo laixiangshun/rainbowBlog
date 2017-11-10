@@ -1,0 +1,43 @@
+<% include ../includes/header.html %>
+    <div style="padding-top:80px;" class="blogwarp">
+        <div class="alllist">
+            <%
+                if(!error){
+                    for(var i=bloglist.length-1;i>=0;i--){
+                        var blogitem=bloglist[i];
+                        var useritem=userlist[i];
+            %>
+                <div class="usermess">
+                    <div><a href="/myblog/<%= user._id %>"><img src="/images/<%= useritem.icon %>"></a></div>
+                    <div>作者:&nbsp;&nbsp;<a href="/usercenter" class="author"><%= useritem.name %></a></div>
+                    <!--<div><%= blogitem.date %></div>-->
+                    <div>标签:&nbsp;&nbsp;<a href="/blogtag/<%= blogitem.tag %>"><%= blogitem.tag %></a></div>
+                </div>
+            <div class="blog-title">
+                <a href="/blog/<%= blogitem._id %>" style="color: #000;"><%= blogitem.title %></a>
+            </div>
+            <div class="blog-content"><%= blogitem.content %></div>
+            <div class="footer">
+                <div>
+                    <i class="fa fa-eye" aria-hidden="true">&nbsp;<%= blogitem.look_num %></i>
+                </div>
+                <div>
+                    <i class="fa fa-heart" aria-hidden="true">&nbsp;<span><%= blogitem.like_num %></span></i>
+                </div>
+                <div class="review">
+                    <i class="fa fa-envelope-open" aria-hidden="true">&nbsp;<%= blogitem.review_num %></i>
+                </div>
+                <div class="blog_date">日期:&nbsp;&nbsp;<span><%= blogitem.date %></span></div>
+            </div>
+            <hr>
+            <%
+                }
+            }else{
+            %>
+                <div><%= error %></div>
+            <%
+                }
+            %>
+        </div>
+    </div>
+<% include ../includes/footer.html %>
