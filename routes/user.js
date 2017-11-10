@@ -114,11 +114,30 @@ exports.getAuthorInfo=function(req,res){
                 console.log('获取作者信息出错:' + err);
             } else {
                 message.totalUnreadMess(user._id).then(function (total) {
-                    res.render('authorInfo', {
-                        title: 'rainbow博客--作者信息',
-                        user: author,
-                        totalmess: total,
-                        self: user //当前登录用户
+                    var isFollow=false; //是否关注
+                    Follow.findOne({userid: user._id},function(err,follow){
+                        if(follow){
+                            var followlist=follow.followList;
+                            for(var i=0;i<followlist.length;i++){
+                                if(followlist[i].authorid == authorid){
+                                    isFollow=true;
+                                    break;
+                                }
+                            }
+                            res.render('authorInfo', {
+                                title: 'rainbow博客--作者信息',
+                                user: author,
+                                totalmess: total,
+                                isFollow: isFollow //当前登录用户
+                            })
+                        }else{
+                            res.render('authorInfo', {
+                                title: 'rainbow博客--作者信息',
+                                user: author,
+                                totalmess: total,
+                                isFollow: isFollow//当前登录用户
+                            })
+                        }
                     })
                 })
             }
@@ -143,7 +162,7 @@ exports.getAuthorInfo=function(req,res){
 //关注作者
 exports.followAuthor=function(req,res){
     var user=req.session.user || null;
-    if(user=null){
+    if(user==null){
         res.redirect('/login');
         return;
     }
@@ -161,13 +180,10 @@ exports.followAuthor=function(req,res){
                         Follow.update({userid: user._id},{followList: followlist},function(err,doc){
                             if(err){
                                 console.log('关注出错:'+err);
-                                res.status=200;
-                                res.type='application/json';
-                                res.body={result: '关注出错'};
+                                res.send({result: '关注出错'});
                             }else{
-                                res.status=200;
-                                res.type='application/json';
-                                res.body={result: 'ok'};
+                                //res.body={result: 'ok'};
+                                res.send({result: 'ok'});
                             }
                         })
                     }else{
@@ -182,21 +198,152 @@ exports.followAuthor=function(req,res){
                         follow.save(function(err,doc){
                             if(err){
                                 console.log('关注出错:'+err);
-                                res.status=200;
-                                res.type='application/json';
-                                res.body={result: '关注出错'};
+                                res.send({result: '关注出错'});
                             }else{
-                                res.status=200;
-                                res.type='application/json';
-                                res.body={result: 'ok'};
+                                res.send({result: 'ok'});
                             }
                         })
                     }
                 })
             }else{
-                res.status=200;
-                res.type='application/json';
-                res.body={result: '找不到该作者'};
+                res.send({result: '找不到该作者'});
             }
+    })
+};
+
+//取消关注
+exports.unFollowAuthor=function(req,res){
+  var user=req.session.user || null;
+    if(user==null){
+        res.redirect('/login');
+        return;
+    }
+    var authorid=req.body.authorid;
+    Follow.findOne({userid: user._id},function(err,follow){
+        if(follow){
+            var followlist=follow.followList;
+            //console.log(followlist);
+            var followList=[];
+            for(var i=0;i<followlist.length;i++){
+                if(followlist[i].authorid == authorid){
+                    //console.log('111111');
+                    //followList=followlist.remove(i);
+                    followList=followlist.del(i);
+                    //console.log(followList);
+                    break;
+                }
+            }
+            Follow.update({userid: user._id},{followList: followList},function(err,doc){
+                if(err){
+                    console.log('取消关注出错:'+err);
+                    res.send({result: '取消关注出错'});
+                }else{
+                    res.send({result: 'ok'});
+                }
+            })
+        }else{
+            res.send({result: '您还没有关注！'});
+        }
+    })
+};
+
+//数组删除其中一个元素
+Array.prototype.remove=function(dx){
+  if(isNaN(dx) || dx>this.length){
+      return false;
+  }
+    var list=[];
+    for(var i= 0,n=0;i<this.length;i++){
+        if(this[i]!=this[dx]){
+            list.push(this[i]);
+        }
+    }
+    //this.length-=1;
+    return list;
+};
+Array.prototype.del=function(n){
+    if(n<0){
+        return this;
+    }else if(n==0){
+        this.length=0;
+        return this;
+    }else{
+        return this.slice(0,n).concat(n+1,this.length);
+    }
+};
+
+//进入作者文章列表页面
+exports.getAuthorBlogs=function(req,res){
+    var user=req.session.user || null;
+    if(user == null){
+        res.redirect('/login');
+        return;
+    }
+    var authorid=req.params.authorid;
+    User.findOne({_id: authorid},function(err,author){
+        if(author){
+            Blog.find({authorid: authorid},function(err,bloglist){
+                var isFollow=false;
+                if(bloglist){
+                    message.totalUnreadMess(user._id).then(function(total){
+                        Follow.findOne({userid: user._id},function(err,follow){
+                            if(follow){
+                                var followList=follow.followList;
+                                for(var i=0;i<followList.length;i++){
+                                    if(followList[i].authorid == authorid){
+                                        isFollow=true;
+                                        break;
+                                    }
+                                }
+                                res.render('authorBlogs',{
+                                    title: 'rainbow博客--作者文章',
+                                    user: author,
+                                    totalmess: total,
+                                    bloglist: bloglist,
+                                    isFollow: isFollow
+                                })
+                            }else{
+                                res.render('authorBlogs',{
+                                    title: 'rainbow博客--作者文章',
+                                    user: author,
+                                    totalmess: total,
+                                    bloglist: bloglist,
+                                    isFollow: isFollow
+                                })
+                            }
+                        })
+                    })
+                }else{
+                    message.totalUnreadMess(user._id).then(function(total){
+                        Follow.findOne({userid: user._id},function(err,follow){
+                            if(follow){
+                                var followList=follow.followList;
+                                for(var i=0;i<followList.length;i++){
+                                    if(followList[i].authorid == authorid){
+                                        isFollow=true;
+                                        break;
+                                    }
+                                }
+                                res.render('authorBlogs',{
+                                    title: 'rainbow博客--作者文章',
+                                    user: author,
+                                    totalmess: total,
+                                    bloglist: bloglist,
+                                    isFollow: isFollow
+                                })
+                            }else{
+                                res.render('authorBlogs',{
+                                    title: 'rainbow博客--作者文章',
+                                    user: author,
+                                    totalmess: total,
+                                    bloglist: bloglist,
+                                    isFollow: isFollow
+                                })
+                            }
+                        })
+                    })
+                }
+            })
+        }
     })
 };

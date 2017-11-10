@@ -98,4 +98,9 @@ module.exports=function(app){
 
     //关注作者
     app.post('/follow',user.followAuthor);
+    //取消关注
+    app.post('/unfollow',user.unFollowAuthor);
+
+    //点击作者名称进入作者文章列表页面
+    app.get('/getAuthorBlog/:authorid',user.getAuthorBlogs);
 };
