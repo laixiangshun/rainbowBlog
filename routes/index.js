@@ -92,4 +92,10 @@ module.exports=function(app){
 
     //根据标签查找所有关于该标签的文章
     app.get('/blogtag/:tagname',tag.getAllBlogByTag);
+
+    //点击头像查看作者信息
+    app.get('/getAuthorInfo/:authorid',user.getAuthorInfo);
+
+    //关注作者
+    app.post('/follow',user.followAuthor);
 };

@@ -6,6 +6,7 @@ var Blog=require('./../models/blog.js');
 var Promise=require('promise');
 var User=require('./../models/user.js');
 var message=require('./message.js');
+var Follow=require('./../models/follow.js');
 
 exports.getBlogByUser=function(req,res){
    var user=req.session.user || null;
@@ -96,5 +97,106 @@ exports.account=function(req,res){
             user: user,
             totalmess: total
         })
+    })
+};
+
+//根据作者获取该作者的信息
+exports.getAuthorInfo=function(req,res){
+    var user=req.session.user ||null;
+    if(user==null){
+        res.redirect('/login');
+        return;
+    }
+    var authorid=req.params.authorid;
+    if(user._id != authorid) {
+        User.findOne({_id: authorid}, function (err, author) {
+            if (err) {
+                console.log('获取作者信息出错:' + err);
+            } else {
+                message.totalUnreadMess(user._id).then(function (total) {
+                    res.render('authorInfo', {
+                        title: 'rainbow博客--作者信息',
+                        user: author,
+                        totalmess: total,
+                        self: user //当前登录用户
+                    })
+                })
+            }
+        })
+    }else{
+        User.findOne({_id: user._id},function(err,user){
+            if(err){
+                console.log('获取用户信息出错:'+err);
+            }else{
+                message.totalUnreadMess(user._id).then(function(total){
+                    res.render('usermess',{
+                        title: 'rainbow博客--个人中心',
+                        user: user,
+                        totalmess: total
+                    })
+                })
+            }
+        })
+    }
+};
+
+//关注作者
+exports.followAuthor=function(req,res){
+    var user=req.session.user || null;
+    if(user=null){
+        res.redirect('/login');
+        return;
+    }
+    var authorid=req.body.authorid;
+        User.findOne({_id: authorid},function(err,author){
+            if(author){
+                Follow.findOne({userid: user._id},function(err,follow){
+                    if(follow){
+                        var item={
+                            authorid: authorid,
+                            authorname: author.name
+                        };
+                        var followlist=follow.followList;
+                        followlist.push(item);
+                        Follow.update({userid: user._id},{followList: followlist},function(err,doc){
+                            if(err){
+                                console.log('关注出错:'+err);
+                                res.status=200;
+                                res.type='application/json';
+                                res.body={result: '关注出错'};
+                            }else{
+                                res.status=200;
+                                res.type='application/json';
+                                res.body={result: 'ok'};
+                            }
+                        })
+                    }else{
+                        var followItem={
+                            userid: user._id,
+                            followList: [{
+                                authorid: authorid,
+                                authorname: author.name
+                            }]
+                        };
+                        var follow=new Follow(followItem);
+                        follow.save(function(err,doc){
+                            if(err){
+                                console.log('关注出错:'+err);
+                                res.status=200;
+                                res.type='application/json';
+                                res.body={result: '关注出错'};
+                            }else{
+                                res.status=200;
+                                res.type='application/json';
+                                res.body={result: 'ok'};
+                            }
+                        })
+                    }
+                })
+            }else{
+                res.status=200;
+                res.type='application/json';
+                res.body={result: '找不到该作者'};
+            }
     })
 };

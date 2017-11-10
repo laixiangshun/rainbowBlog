@@ -91,12 +91,14 @@
 		.btn-link-move
 		{
 			text-decoration:none;
-			font-size:16px;
+			font-size:22px;
+			width: auto;
 		}
 		
 		#self
 		{
-			color:#F23557;border-bottom:1px #F23557 solid;	
+			color:#F23557;
+			border-bottom:1px #F23557 solid;
 		}
 		
 		#self:hover

@@ -1,7 +1,7 @@
 /**
  * Created by lailai on 2017/11/9.
- * 博客文章标签集合
- * 每一种标签也名称区别，下面包括所有包含该标签的文章的集合
+ * 鍗氬鏂囩珷鏍囩闆嗗悎
+ * 姣忎竴绉嶆爣绛句篃鍚嶇О鍖哄埆锛屼笅闈㈠寘鎷墍鏈夊寘鍚鏍囩鐨勬枃绔犵殑闆嗗悎
  */
 var Schema=require('mongoose').Schema;
 

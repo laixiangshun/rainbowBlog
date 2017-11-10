@@ -8,7 +8,7 @@
                         var useritem=userlist[i];
             %>
                 <div class="usermess">
-                    <div><a href="/myblog/<%= user._id %>"><img src="/images/<%= useritem.icon %>"></a></div>
+                    <div><a href="/getAuthorInfo/<%= blogitem.authorid %>"><img src="/images/<%= useritem.icon %>"></a></div>
                     <div>作者:&nbsp;&nbsp;<a href="/usercenter" class="author"><%= useritem.name %></a></div>
                     <!--<div><%= blogitem.date %></div>-->
                     <div>标签:&nbsp;&nbsp;<a href="/blogtag/<%= blogitem.tag %>"><%= blogitem.tag %></a></div>
