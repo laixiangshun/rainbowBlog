@@ -103,4 +103,7 @@ module.exports=function(app){
 
     //点击作者名称进入作者文章列表页面
     app.get('/getAuthorBlog/:authorid',user.getAuthorBlogs);
+
+    //关注页面
+    app.get('/followAuthors',user.getAllFollowAuthors);
 };

@@ -209,6 +209,7 @@ a{
 a:hover{
 	color: #F23557;
 	text-underline: none;
+	text-decoration: none;
 }
 .content{
 	position: relative;

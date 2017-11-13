@@ -222,14 +222,14 @@ exports.unFollowAuthor=function(req,res){
     Follow.findOne({userid: user._id},function(err,follow){
         if(follow){
             var followlist=follow.followList;
-            //console.log(followlist);
+            console.log(followlist);
             var followList=[];
             for(var i=0;i<followlist.length;i++){
                 if(followlist[i].authorid == authorid){
                     //console.log('111111');
                     //followList=followlist.remove(i);
                     followList=followlist.del(i);
-                    //console.log(followList);
+                    console.log(followList);
                     break;
                 }
             }
@@ -264,11 +264,9 @@ Array.prototype.remove=function(dx){
 Array.prototype.del=function(n){
     if(n<0){
         return this;
-    }else if(n==0){
-        this.length=0;
-        return this;
-    }else{
-        return this.slice(0,n).concat(n+1,this.length);
+    }
+    else{
+        return this.slice(0,n).concat(this.slice(n+1,this.length));
     }
 };
 
@@ -343,6 +341,51 @@ exports.getAuthorBlogs=function(req,res){
                         })
                     })
                 }
+            })
+        }
+    })
+};
+
+//关注页面
+exports.getAllFollowAuthors=function(req,res){
+    var user=req.session.user || null;
+    if(user==null){
+        res.redirect('/login');
+        return;
+    }
+    Follow.findOne({userid: user._id},function(err,follow){
+        if(follow.followList.length>0){
+            var followlist=follow.followList;
+            var userlist=[];
+            for(var i=0;i<followlist.length;i++){
+                userlist.push(new Promise(function(resolve,reject){
+                    User.findOne({_id: followlist[i].authorid},function(err,user){
+                        if(user){
+                            resolve(user);
+                        }else{
+                            resolve(null);
+                        }
+                    })
+                }))
+            }
+            Promise.all(userlist).then(function(userlist){
+                message.totalUnreadMess(user._id).then(function(total){
+                    res.render('followAuthors',{
+                        title: 'rainbow博客--关注',
+                        user: user,
+                        totalmess: total,
+                        followList: userlist
+                    })
+                })
+            })
+        }else{
+            message.totalUnreadMess(user._id).then(function(total){
+                res.render('followAuthors',{
+                    title: 'rainbow博客--关注',
+                    user: user,
+                    totalmess: total,
+                    followList: ''
+                })
             })
         }
     })
