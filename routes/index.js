@@ -113,4 +113,14 @@ module.exports=function(app){
     //修改密码
     app.post('/restpassword',user.getUserByEmail);
     app.post('/submitRestPass',user.updateUserPass);
+
+    //关于
+    app.get('/about',function(req,res){
+        var user=req.session.user || null;
+        res.render('about',{
+            title: 'rainbow博客--关于',
+            user: user,
+            totalmess: null
+        })
+    });
 };
