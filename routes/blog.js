@@ -127,6 +127,10 @@ function saveBlogTag(blog){
 //获取某条博客的信息，并更新浏览次数
 exports.getBlog=function(req,res){
     var user=req.session.user || null;
+    if(user ==null){
+        res.redirect('/login');
+        return;
+    }
     var error='';
     var blogid=req.params.blogid;
     Blog.findOne({_id: blogid},function(err,blog){
@@ -143,7 +147,7 @@ exports.getBlog=function(req,res){
             //获取该文章的所有评论信息
             var promise3=findReview(blogid);
             //查看未读消息
-            var promise4=message.totalUnreadMess(blog.authorid);
+            var promise4=message.totalUnreadMess(user._id);
 
             Promise.all([promise1,promise2,promise3,promise4]).then(function(result){
                 res.render('blogdetail',{

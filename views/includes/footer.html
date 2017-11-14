@@ -48,12 +48,37 @@
             var reader=new FileReader();
             reader.onload=function(e){
                 pic= e.target.result;
-                console.log(pic);
+//                console.log(pic);
                 $('#myicon').attr('src',pic);
+                $('#submit').show();
             };
             reader.readAsDataURL(file);
         }
     }
+    //ajax提交--换头像--上传图片
+    $(function(){
+        $("#submit").click(function(){
+            var formData=new FormData($('#myform')[0]);
+            console.log(formData);
+            $.ajax({
+                url: '/uploadImg',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data){
+                    if(data.result=='ok'){
+                        setTimeout(function(){
+//                            window.location.href='/usercenter';
+                            window.location.reload();
+                        },500);
+                    }else{
+                        alert(data.result);
+                    }
+                }
+            })
+        })
+    })
 </script>
 </body>
 </html>

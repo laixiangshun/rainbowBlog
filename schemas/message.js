@@ -14,7 +14,7 @@ var messageSchema = new Schema({
         reusericon: String,  //评论用户icon
         blogid: String, //博客的id
         blogname: String, //博客的name
-        hostid: String,
+        hostid: String, //楼层Id
         content: String,  //评论内容
         actiontype: Number,  //1表示喜欢, 2表示评论, 值为3表示回复
         status: Number, //0表示未查看, 1表示已查看

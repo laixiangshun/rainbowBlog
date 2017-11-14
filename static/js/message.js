@@ -59,7 +59,7 @@ function reply(blogid,id,reviewhostid){
             if(req.responseText=='ok'){
                 setTimeout(function(){
                     location.reload();
-                },1000);
+                },500);
             }else{
                 console.log('回复消息出错');
             }

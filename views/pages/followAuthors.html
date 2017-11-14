@@ -36,7 +36,8 @@
             %>
                 <div class="nofollowAuthor">
                     <p>你还没有关注任何人，请先关注再来查看。。。。。。</p>
-                    <a href="/bloglist">回到博客主页</a>
+                    <span id="secend">将在5秒后跳转</span>
+                    <a href="/bloglist">立即返回</a>
                 </div>
             <%
                 }
@@ -66,5 +67,23 @@
             }
         })
     }
+    $(function(){
+        var n=5;
+        var second=$('#secend').html();
+        console.log(second);
+        if(second && second!='undefined'){
+            var timer=setInterval(function(){
+                n--;
+                console.log(n);
+                if(n<=1){
+                    clearInterval(timer);
+                    setTimeout(function(){
+                        window.location.href='/bloglist';
+                    },500);
+                }
+                $('#secend').html('将在'+n+'秒后跳转');
+            },1000);
+        }
+    })
 </script>
 <% include ../includes/footer.html %>

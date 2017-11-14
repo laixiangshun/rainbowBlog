@@ -8,7 +8,7 @@ var message=require('./message.js');
 var review=require('./review.js');
 var user=require('./user.js');
 var tag=require('./tag.js');
-
+var upload=require('./upload.js');
 
 module.exports=function(app){
   app.get('/home',function(req,res){
@@ -106,4 +106,7 @@ module.exports=function(app){
 
     //关注页面
     app.get('/followAuthors',user.getAllFollowAuthors);
+
+    //上传头像
+    app.post('/uploadImg',upload.dataInput);
 };

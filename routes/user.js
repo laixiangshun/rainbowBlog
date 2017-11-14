@@ -76,8 +76,16 @@ exports.updateUserMess=function(req,res){
         tel: usertel,
         email: useremail
     },function(err,doc){
-        if(doc.ok){
-            res.redirect('/usercenter');
+        if(!err){
+            if(doc.ok){
+                User.findOne({_id: user._id},function(err,user){
+                    if(user){
+                        console.log(user);
+                        req.session.user=user;
+                        res.redirect('/usercenter');
+                    }
+                })
+            }
         }else{
             console.log('更新用户出错:'+err);
         }

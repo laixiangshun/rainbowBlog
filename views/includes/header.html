@@ -28,8 +28,8 @@
         <div class="nav-list">
             <ul>
                 <a href="/bloglist"><li>主页</li></a>
-                <a href="/followAuthors"><li>关注</li></a>
-                <a href="/messlist"><li>消息
+                <a href="/followAuthors"><li>我的关注</li></a>
+                <a href="/messlist"><li>我的消息
                     <% if(user)
                         { if(totalmess){
                         %>
@@ -39,7 +39,7 @@
                         }
                         %>
                     </li></a>
-                <a href="#"><li>关于</li></a>
+                <a href="#"><li>关于我们</li></a>
             </ul>
         </div>
         <% if(!user)
@@ -53,10 +53,11 @@
             }else{
         %>
         <div class="nav-user">
+            <a href="/writeBlog" class="write btn btn-primary" style="display: flex">写博客</a>
+            <span class="show_username">欢迎您，<%= user.name %></span>
             <div class="user-img">
                 <a href="/myblog/<%= user._id %>"><img src="/images/<%= user.icon %>"></a>
             </div>
-            <a href="/writeBlog" class="write btn btn-primary" style="display: flex">写博客</a>
             <a href="/logout">登出</a>
         </div>
         <%

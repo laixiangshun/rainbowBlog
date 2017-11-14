@@ -7,6 +7,7 @@ var bodyParser=require('body-parser');
 var session=require('express-session');
 var cookieParser=require('cookie-parser');
 var mongoose=require('mongoose');
+var multer=require('multer');
 
 //将路由文件引入
 var route=require('./routes/index.js');
@@ -39,6 +40,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+//app.use(multer({dest:'./uploads'}));
 
 //监听端口
 app.listen(port);
