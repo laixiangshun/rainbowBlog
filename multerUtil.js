@@ -1,5 +1,6 @@
 /**
  * Created by lailai on 2017/11/13.
+ * multer中间件上传文件的工具方法
  */
 var multer=require('multer');
 var storage=multer.diskStorage({

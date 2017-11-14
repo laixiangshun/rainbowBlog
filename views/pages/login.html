@@ -20,7 +20,7 @@
 <article>
 
     <section class="mainbody">
-        <div class="form-container">
+        <div class="form-container" id="login">
             <form action="/doLogin" method="post">
                 <div>
                     <a class="h3 choice" style="border-bottom: red 2px solid;" href="/login/">登录</a>
@@ -35,14 +35,44 @@
                 <div>
                     <input type="submit" name="submit" value="登录" id="submit" class="btn btn-primary">
                 </div>
-                <div><a href="#" style="color: #2aabd2;">忘记密码？</a></div>
+                <div><a href="javascript:void(0);" onclick="showRestPaw();" style="color: #2aabd2;">忘记密码？</a></div>
                 <% if (error){%>
                 <div class="errormess"><%=error%></div>
                 <%}%>
             </form>
         </div>
+<!--根据邮箱进入重置密码界面-->
+        <div class="form-container" id="resetPaw" style="display: none;">
+            <form action="" method="post" id="restform" onsubmit="return true;" style="padding-bottom: 0">
+                <div style="margin-top: 30px">
+                    <input type="text" name="eamil" placeholder="邮箱" class="form-control">
+                </div>
+                <div>
+                    <input type="button" name="submit" id="next" value="下一步" class="btn btn-primary">
+                </div>
+                <div style="margin-bottom: 5px"><a href="/login" style="color: #2aabd2;">返回登录</a></div>
+                <div class="errormess" id="showmess" style="margin-top: 5px;display: none;">显示错误</div>
+            </form>
+        </div>
+<!--输入新密码-->
+        <div class="form-container" style="display: none" id="newPaw">
 
-        <div></div>
+            <form method="post" action="" id="submitRest" style="padding-bottom: 0;">
+                <h2>重置密码</h2>
+                <input type="hidden" name="userid" id="userid" class="form-control">
+                <div>
+                    <input type="password" name="pass" placeholder="新密码" class="form-control">
+                </div>
+                <div>
+                    <input type="password" name="newpass" placeholder="确认新密码" class="form-control">
+                </div>
+                <div>
+                    <input type="button" name="submit" id="sure" value="确定" class="btn btn-primary">
+                </div>
+                <div style="margin-bottom: 5px"><a href="/login" style="color: #2aabd2;">返回登录</a></div>
+                <div class="errormess" id="showerrormess" style="margin-top: 5px;margin-bottom: 0;display: none;">显示错误</div>
+            </form>
+        </div>
     </section>
 
 </article>
@@ -57,6 +87,65 @@
         if(e.keyCode == '13'){
             $('#submit').click();
         }
+    });
+    function showRestPaw(){
+        $("#login").hide();
+        $("#resetPaw").show();
+    }
+    $(function(){
+        $("#next").click(function(){
+            if($("#restform input[name='eamil']").val()==null || $("#restform input[name='eamil']").val()==''){
+                $("#showmess").show();
+                $("#showmess").html('邮箱不能为空');
+                return;
+            }
+            $.ajax({
+                url: '/restpassword',
+                type: 'post',
+                dataType: 'json',
+                data: $("#restform").serialize(),
+                success: function(data){
+                    if(data.result=='ok'){
+                        $("#newPaw").show();
+                        $("#resetPaw").hide();
+                        $("#userid").val(data.user._id);
+                    }else{
+                        $("#showmess").show();
+                        $("#showmess").html(data.result);
+                    }
+                }
+            })
+        });
+
+        $("#sure").click(function(){
+            var password=$("#submitRest input[name='pass']").val();
+            var newpass=$("#submitRest input[name='newpass']").val();
+            if(password=='' || password==null || newpass=='' || newpass==null){
+                $("#showerrormess").show();
+                $("#showerrormess").html('新密码或确认新密码不能为空');
+                return;
+            }
+            if(password !=newpass){
+                $("#showerrormess").show();
+                $("#showerrormess").html('两次输入密码不一致');
+                return;
+            }
+            $.ajax({
+                url: '/submitRestPass',
+                data: $("#submitRest").serialize(),
+                type: 'post',
+                dataType: 'json',
+                success: function(data){
+                    if(data.result=='ok'){
+                        $("#login").show();
+                        $("#newPaw").hide();
+                    }else{
+                        $("#showerrormess").show();
+                        $("#showerrormess").html(data.result);
+                    }
+                }
+            })
+        })
     })
 </script>
 

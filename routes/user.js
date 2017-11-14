@@ -398,3 +398,41 @@ exports.getAllFollowAuthors=function(req,res){
         }
     })
 };
+
+//修改密码
+exports.getUserByEmail=function(req,res){
+    var email=req.body.eamil;
+    User.findOne({email: email},function(err,user){
+        if(err){
+            console.log('修改密码出错:'+err);
+            res.send({result: '根据邮箱查找用户出错'});
+        }else{
+            if(user){
+                res.send({result: 'ok',user: user});
+            }else{
+                res.send({result: '该邮箱还没有被注册'});
+            }
+        }
+    })
+};
+exports.updateUserPass=function(req,res){
+    var userid=req.body.userid;
+    var pass=req.body.pass;
+    var newpass=req.body.newpass;
+    if(pass == newpass){
+        User.update({_id: userid},{password: pass},function(err,doc){
+            if(err){
+                console.log('修改密码出错:'+err);
+                res.send({result: '修改密码出错'});
+            }else{
+                if(doc.ok){
+                    res.send({result: 'ok'});
+                }else{
+                    res.send({result: '修改密码失败'});
+                }
+            }
+        })
+    }else{
+        res.send({result: '请确认两次密码一致'});
+    }
+};

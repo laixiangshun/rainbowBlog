@@ -109,4 +109,8 @@ module.exports=function(app){
 
     //上传头像
     app.post('/uploadImg',upload.dataInput);
+
+    //修改密码
+    app.post('/restpassword',user.getUserByEmail);
+    app.post('/submitRestPass',user.updateUserPass);
 };
